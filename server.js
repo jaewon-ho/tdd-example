@@ -5,7 +5,8 @@ global.conf = require('./config');
 
 const mongoose = require('mongoose');
 mongoose.connect(
-    global.config.mongodb.url, 
+    global.conf.mongodb.url, 
+    {dbName: global.conf.mongodb.dbName},
     (err) => {
         if(err) {
             console.error('mongoDB connection ERROR');

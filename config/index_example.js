@@ -1,3 +1,4 @@
 exports.mongodb = {
-    url : 'url~~~'
+    url : 'url~~~',
+    dbName: 'dbName'
 }
