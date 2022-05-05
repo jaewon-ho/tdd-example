@@ -12,7 +12,6 @@ const loadRouters = (dir) => {
 
         routers[basePath] = router;
     });
-    console.log(routers);
     return routers;
 }
 
