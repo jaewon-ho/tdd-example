@@ -26,7 +26,14 @@ Object.keys(routers).forEach((base) => {
     app.use(`/${base}`, routers[base]);
 })
 
+app.use((err, req, res, next) => {
+    if(err) {
+        res.status(500).json({message: err.message})
+    }
+})
 
 app.listen(PORT, () => {
     console.log(`Running on PORT ${PORT}`);
 });
+
+module.exports = app;
