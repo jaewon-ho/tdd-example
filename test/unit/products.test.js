@@ -34,21 +34,21 @@ describe('Product Controller Create', () => {  // ProductContoller 의 테스트
         expect(typeof productController.createProduct).toBe("function");
     }); 
 
-    it("Should call ProductModel.create ", () => {
+    it("Should call ProductModel.create ", async () => {
         // createProduct 함수에서는 ProductModel의 create 함수를 호출 해야 한다.
-        productController.createProduct(req, res, next);
+        await productController.createProduct(req, res, next);
         expect(productModel.create).toBeCalled();
     })
 
-    it("should return 201 response Code", () => {
-        productController.createProduct(req, res, next);
+    it("should return 201 response Code", async () => {
+        await productController.createProduct(req, res, next);
         expect(res.statusCode).toBe(201);
         expect(res._isEndCalled()).toBeTruthy();
     })
 
-    it("should return json body in response", () => {
+    it("should return json body in response", async () => {
         Product.create.mockReturnValue(newProduct);
-        productController.createProduct(req, res, next);
+        await productController.createProduct(req, res, next);
         expect(res._getJSONData()).toStrictEqual(newProduct);
     })
 })
