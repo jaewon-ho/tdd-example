@@ -17,7 +17,7 @@ let next = null;
 beforeEach(() => {// 모든 케이스에 적용함
     req = httpMock.createRequest();
     res = httpMock.createResponse();
-    next = null;
+    next = jest.fn(); // Spy 함수 호출 여부를 파악
 })
 
 // describe 여러 관련 테스트를 그룹화 하는 블록을 만든다
@@ -50,6 +50,14 @@ describe('Product Controller Create', () => {  // ProductContoller 의 테스트
         Product.create.mockReturnValue(newProduct);
         await productController.createProduct(req, res, next);
         expect(res._getJSONData()).toStrictEqual(newProduct);
+    })
+
+    it("should handle errors", async() => {
+        const errorMesasge = {message: "description property missing"};
+        const rejectedPromise = Promise.reject(errorMesasge);
+        productModel.create.mockReturnValue(rejectedPromise);
+        await productController.createProduct(req, res, next);
+        expect(next).toBeCalledWith(errorMesasge);
     })
 })
 
