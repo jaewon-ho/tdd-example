@@ -44,3 +44,8 @@ it("GET /product/:id", async() => {
     expect(response.body.description).toBeDefined();
 });
 
+it("GET /product/:id id dosen't exist", async () => {
+    const response = await request(app).get('/product/'+'627337c82748612de3af3102');
+    expect(response.statusCode).toBe(404);
+})
+

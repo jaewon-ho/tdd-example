@@ -21,11 +21,12 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getProductById = async (req, res, next) => {
     try {
-        const result = await productModel.findById(req.params.id)
+        const result = await productModel.findById(req.params.id);
         if(!result) throw new Error("not found");
 
         res.status(200).json(result);
     } catch(e) {
+        console.log(e);
         if(e.message === 'not found') res.status(404);
         next(e);
     }
