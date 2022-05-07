@@ -12,6 +12,7 @@ const Product = require('../../models/Product');
 productModel.create = jest.fn(); // Spy 함수 호출 여부를 파악
 productModel.find = jest.fn(); // Spy 함수 호출 여부를 파악
 productModel.findById = jest.fn(); // Spy 함수 호출 여부를 파악
+productModel.findByIdAndUpdate = jest.fn(); // Spy 함수 호출 여부를 파악
 
 let req = null;
 let res = null;
@@ -94,7 +95,6 @@ describe("Product Controller Get List", () => {
         const rejectedPromise = Promise.reject(errorMesasge);
         productModel.find.mockReturnValue(rejectedPromise);
         await productController.getProducts(req, res, next);
-        console.log(res);
         expect(next).toBeCalledWith(errorMesasge);
     })
 
@@ -133,5 +133,51 @@ describe("Product Contoller GetById", () => {
         await productController.getProductById(req, res, next);
         expect(res.statusCode).toBe(404);
         // expect(next).toHaveBeenCalledWith()
+    })
+})
+
+
+describe("Product Contoller Update", () => {
+    it("should have an updateProduct function", () => {
+        expect(typeof productController.updateProduct).toBe("function")
+    })
+
+    it("should call productModel findByIdAndUpdate", async() => {
+        req.params.id = "627337c82748612de3af3890";
+        req.body = {name: "updatedNAme"};
+        await productController.updateProduct(req, res, next);
+        expect(productModel.findByIdAndUpdate).toHaveBeenCalledWith(
+            req.params.id,
+            req.body, 
+            {new: true}
+        );  
+    })
+
+    it("should return 201 status code and json body", async () => {
+        req.params.id = "627337c82748612de3af3890";
+        req.body = {name: "updatedNAme"};
+        const updatedPoduct = {...req.body, description: "설명", id: req.params.id};
+        productModel.findByIdAndUpdate.mockReturnValue(updatedPoduct);
+        await productController.updateProduct(req, res, next);
+        expect(res.statusCode).toBe(201);
+        expect(res._isEndCalled).toBeTruthy();
+        expect(res._getJSONData()).toStrictEqual(updatedPoduct);
+    })
+
+    it("should handled 404 error when item doesn't exist", async () => {
+        productModel.findByIdAndUpdate.mockReturnValue(null);
+        await productController.updateProduct(req, res, next);
+        expect(res.statusCode).toBe(404);
+        expect(res._isEndCalled).toBeTruthy();
+    });
+
+
+    it("should handled error", async () => {
+        const errorMesasge = {message: "error"};
+        const rejectedPromise = Promise.reject(errorMesasge);
+        productModel.findByIdAndUpdate.mockReturnValue(rejectedPromise);
+        await productController.updateProduct(req, res, next);
+        expect(next).toBeCalledWith(errorMesasge);
+        expect(res.statusCode).toBe(500);
     })
 })

@@ -26,8 +26,19 @@ exports.getProductById = async (req, res, next) => {
 
         res.status(200).json(result);
     } catch(e) {
-        console.log(e);
         if(e.message === 'not found') res.status(404);
+        next(e);
+    }
+}
+
+exports.updateProduct = async (req, res, next) => {
+    try {
+        const updatedData = await productModel.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        if(!updatedData) throw new Error('not found');
+        res.status(201).json(updatedData);
+    }catch(e) {
+        if(e.message === 'not found') res.status(404);
+        else res.status(500)
         next(e);
     }
 }

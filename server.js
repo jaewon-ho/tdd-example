@@ -28,8 +28,9 @@ Object.keys(routers).forEach((base) => {
 
 app.use((err, req, res, next) => {
     if(err) {
-        if(!res.statusCode) res.status(500).json({message: err.message})
-        else res.status(res.statusCode).json(err);
+        console.log(res.statusCode);
+        if(res.statusCode != '404') res.status(500).json({message: err.message})
+        else res.status(404).json(err);
     }
 })
 
