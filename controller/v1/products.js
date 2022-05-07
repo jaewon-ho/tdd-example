@@ -9,3 +9,24 @@ exports.createProduct = async (req, res, next) => {
         next(e);
     }
 }
+
+exports.getProducts = async (req, res, next) => {
+    try {
+        const list = await productModel.find({});
+        res.status(200).json(list);
+    }catch(e) {
+        next(e);
+    }
+}
+
+exports.getProductById = async (req, res, next) => {
+    try {
+        const result = await productModel.findById(req.params.id)
+        if(!result) throw new Error("not found");
+
+        res.status(200).json(result);
+    } catch(e) {
+        if(e.message === 'not found') res.status(404);
+        next(e);
+    }
+}

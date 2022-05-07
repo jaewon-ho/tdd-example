@@ -1,0 +1,22 @@
+[
+    {
+        "name": "test product",
+        "description": "설명 테스트 중입니다",
+        "price": 100000
+    },
+    {
+        "name": "test product",
+        "description": "설명 테스트 중입니다",
+        "price": 100000
+    },
+    {
+        "name": "test product",
+        "description": "설명 테스트 중입니다",
+        "price": 100000
+    },
+    {
+        "name": "test product",
+        "description": "설명 테스트 중입니다",
+        "price": 100000
+    }
+]

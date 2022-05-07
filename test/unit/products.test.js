@@ -4,10 +4,14 @@ const productModel = require('../../models/Product')
 const httpMock = require('node-mocks-http');
 
 const newProduct = require('../data/new-product');
+const allProducts = require('../data/all-products');
+
 const Product = require('../../models/Product');
 // const req = require('express/lib/request');
 
 productModel.create = jest.fn(); // Spy 함수 호출 여부를 파악
+productModel.find = jest.fn(); // Spy 함수 호출 여부를 파악
+productModel.findById = jest.fn(); // Spy 함수 호출 여부를 파악
 
 let req = null;
 let res = null;
@@ -61,3 +65,73 @@ describe('Product Controller Create', () => {  // ProductContoller 의 테스트
     })
 })
 
+
+describe("Product Controller Get List", () => {
+    it("should have a getProducts function", () => {
+        expect(typeof productController.getProducts).toBe("function");
+    })
+
+    it("should call ProductModel.find({})", async () => {
+        await productController.getProducts(req, res, next);
+        expect(productModel.find).toHaveBeenCalledWith({});
+    });
+    
+    it("should return 200 response ", async () => {
+        await productController.getProducts(req, res, next);
+        expect(res.statusCode).toBe(200);
+        expect(res._isEndCalled).toBeTruthy();
+    });
+
+    it("should return json body in response", async () => {
+        // await productController.getProducts()
+        productModel.find.mockReturnValue(allProducts);
+        await productController.getProducts(req, res, next);
+        expect(res._getJSONData()).toStrictEqual(allProducts);
+    })
+
+    it("should handle errors", async () => {
+        const errorMesasge = {message: "Error finding product data"};
+        const rejectedPromise = Promise.reject(errorMesasge);
+        productModel.find.mockReturnValue(rejectedPromise);
+        await productController.getProducts(req, res, next);
+        console.log(res);
+        expect(next).toBeCalledWith(errorMesasge);
+    })
+
+})
+
+
+describe("Product Contoller GetById", () => {
+    it("shoud have a getProductById", () => {
+        expect(typeof productController.getProductById).toBe("function");
+    })
+
+    it("should called productModel.findById", async () => {
+        req.params.id = "627337c82748612de3af3890";
+        await productController.getProductById(req, res, next);
+        expect(productModel.findById).toBeCalledWith(req.params.id);
+    })
+
+    it("should return json body and response code 200", async () => {
+        // req.params.id = "627337c82748612de3af3890";
+        productModel.findById.mockReturnValue(newProduct);
+        await productController.getProductById(req, res, next);
+        expect(res.statusCode).toBe(200);
+        expect(res._getJSONData()).toStrictEqual(newProduct);
+        expect(res._isEndCalled()).toBeTruthy();
+    })
+    
+    it("should return 404 error when item dosen't exist", async () => {
+        productModel.findById.mockReturnValue(null);
+        await productController.getProductById(req, res, next);
+        expect(res.statusCode).toBe(404);
+        expect(res._isEndCalled).toBeTruthy();
+    })
+
+    it("should handle errors", async() => {
+        req.params.id = "";
+        await productController.getProductById(req, res, next);
+        expect(res.statusCode).toBe(404);
+        // expect(next).toHaveBeenCalledWith()
+    })
+})
