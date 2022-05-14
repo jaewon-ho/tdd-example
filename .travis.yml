@@ -1,0 +1,16 @@
+sudo: required
+
+language: generic
+
+services:
+  - docker
+
+befor_install:
+  - echo "start Creating an image with dockerfile"
+  - docker build -t tdd-app .
+
+script:
+  - docker run -e CI=true tdd-app npm run test -- --coverage
+
+afeter_success:
+  - echo "Test Success"
