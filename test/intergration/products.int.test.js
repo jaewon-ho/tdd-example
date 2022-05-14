@@ -49,3 +49,12 @@ it("GET /product/:id id dosen't exist", async () => {
     expect(response.statusCode).toBe(404);
 })
 
+it("PUT /product/:id", async()=> {
+    const res = await request(app).put('/product/'+"627337c82748612de3af3890").send({
+        name: 'new Product Name'
+    });
+    console.log(res);
+    expect(res.statusCode).toBe(201);
+    expect(res.body.name).toBe('new Product Name');
+    expect(res.body.description).toBeDefined();
+})
